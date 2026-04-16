@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="header-action-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+    <h2>Audit Logs</h2>
+</div>
+
+<!-- Filters -->
+<div class="card" style="background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+    <form method="GET" style="display:flex; gap:15px; align-items:flex-end;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Actor ID</label>
+            <input type="text" name="actor_id" class="form-control" value="{{ request.args.get('actor_id', '') }}">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Action Type</label>
+            <input type="text" name="action" class="form-control" value="{{ request.args.get('action', '') }}">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Target Type</label>
+            <select name="target_type" class="form-control">
+                <option value="">All</option>
+                <option value="user" {% if request.args.get('target_type') == 'user' %}selected{% endif %}>User</option>
+                <option value="request" {% if request.args.get('target_type') == 'request' %}selected{% endif %}>Request</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:auto; padding:10px 20px;">Filter</button>
+        <a href="{{ url_for('admin_bp.audit_logs') }}" class="btn" style="background:#bdc3c7; padding:10px 20px; text-decoration:none; color:#333;">Clear</a>
+    </form>
+</div>
+
+<div class="card" style="background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+    <table style="width:100%; border-collapse: collapse; font-size:14px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+                <th style="padding: 12px;">Timestamp</th>
+                <th style="padding: 12px;">Action</th>
+                <th style="padding: 12px;">Actor</th>
+                <th style="padding: 12px;">Target</th>
+                <th style="padding: 12px;">Changes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr style="border-bottom: 1px solid #f5f5f5;">
+                <td style="padding: 12px; white-space:nowrap;">{{ log.logged_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td style="padding: 12px;"><strong>{{ log.action_type }}</strong></td>
+                <td style="padding: 12px;">
+                    {% if log.actor_id in actors %}
+                        {{ actors[log.actor_id].employee_id }} ({{ actors[log.actor_id].full_name }})
+                    {% else %}
+                        System/Deleted
+                    {% endif %}
+                </td>
+                <td style="padding: 12px;">{{ log.target_type }} #{{ log.target_id }}</td>
+                <td style="padding: 12px;">
+                    {% if log.old_state or log.new_state %}
+                        <div style="font-size:12px; color:#666;">
+                            {% if log.old_state %}<span style="color:var(--danger)">Old: {{ log.old_state }}</span><br>{% endif %}
+                            {% if log.new_state %}<span style="color:var(--success)">New: {{ log.new_state }}</span>{% endif %}
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="padding: 20px; text-align: center;">No audit logs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

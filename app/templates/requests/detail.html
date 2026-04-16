@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card" style="background:#fff; padding:30px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
+        <div>
+            <h2 style="margin:0 0 10px 0;">{{ req.title }}</h2>
+            <div style="font-size:14px; color:#666;">
+                <strong>{{ req.request_code }}</strong> | 
+                Category: {{ req.category }} | 
+                Requester: {{ req.requester.full_name }}
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div style="margin-bottom:10px;">
+                <span class="badge" style="background:#34495e; color:#fff; font-size:14px;">{{ req.status.replace('_', ' ').upper() }}</span>
+            </div>
+            <div style="font-size:12px; color:#666;">
+                Submitted: {{ req.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-bottom:30px;">
+        <h4 style="margin-top:0;">Description</h4>
+        <div style="background:#f9f9f9; padding:20px; border-radius:5px; white-space:pre-wrap; border:1px solid #eee;">{{ req.description }}</div>
+    </div>
+    
+    {% if active_ra and req.status == 'pending' %}
+    <div style="background:#e8f4f8; padding:20px; border-left:4px solid var(--primary); margin-bottom:30px; border-radius:3px;">
+        <h3 style="margin-top:0; color:var(--primary-dark);">Your Turn to Act</h3>
+        
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <!-- Primary Action Form -->
+            <form method="POST" action="{{ url_for('approvals_bp.take_action', request_id=req.id) }}" style="flex:2; min-width:300px; background:#fff; padding:15px; border-radius:5px; border:1px solid #ccc;">
+                {{ action_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ action_form.action.label }}
+                    {{ action_form.action(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ action_form.comment.label }}
+                    {{ action_form.comment(class="form-control", rows=3) }}
+                </div>
+                {{ action_form.submit(class="btn btn-primary") }}
+            </form>
+            
+            <!-- Snooze Form -->
+            <form method="POST" action="{{ url_for('approvals_bp.snooze', request_id=req.id) }}" style="flex:1; min-width:250px; background:#fff; padding:15px; border-radius:5px; border:1px solid #ccc;">
+                {{ snooze_form.hidden_tag() }}
+                <h4 style="margin-top:0;">Need more time?</h4>
+                <div class="form-group">
+                    {{ snooze_form.reason.label }}
+                    {{ snooze_form.reason(class="form-control", rows=2) }}
+                </div>
+                <button type="submit" class="btn" style="background:#f39c12; color:white; width:100%;">Snooze (24h)</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if versions %}
+    <div style="margin-bottom:30px;">
+        <h4>Version History</h4>
+        {% for v in versions %}
+        <div style="background:#fff8e1; border-left:4px solid #f39c12; padding:15px; margin-bottom:10px; border-radius:3px;">
+            <div style="font-size:12px; color:#f39c12; margin-bottom:5px;"><strong>Version {{ v.version_num }}</strong> - Modified at {{ v.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            <div style="font-size:13px; margin-bottom:10px;"><strong>Change requested:</strong> {{ v.change_comment }}</div>
+            <details>
+                <summary style="font-size:12px; cursor:pointer; color:#666;">View original description</summary>
+                <div style="margin-top:10px; padding:10px; background:#fff; border:1px solid #ffe082; white-space:pre-wrap; font-size:13px;">{{ v.description }}</div>
+            </details>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div>
+        <h4>Assigned Approvers</h4>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            {% for a in req.approvers %}
+            <div style="background:#e1f5fe; border:1px solid #b3e5fc; padding:8px 15px; border-radius:20px; font-size:13px; color:#0277bd;">
+                <strong>{{ a.approver.full_name }}</strong> ({{ a.approver.role }})
+                {% if a.note_to_approver %}
+                    <div style="font-size:11px; margin-top:5px; padding-top:5px; border-top:1px dashed #b3e5fc;">Note: {{ a.note_to_approver }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

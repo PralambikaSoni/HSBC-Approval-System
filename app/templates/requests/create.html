@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+    <h2>Create New Request</h2>
+</div>
+
+<form method="POST" action="" id="create-request-form">
+    {{ form.hidden_tag() }}
+    
+    <div style="display:flex; flex-wrap:wrap; gap:30px;">
+        <!-- Left Column: Form Fields -->
+        <div class="card" style="flex:1; min-width:300px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class="form-control") }}
+            </div>
+            
+            <div style="display:flex; gap:15px; margin-bottom: 20px;">
+                <div class="form-group" style="flex:1; margin-bottom: 0;">
+                    {{ form.category.label }}
+                    {{ form.category(class="form-control") }}
+                </div>
+                <div class="form-group" style="flex:1; margin-bottom: 0;">
+                    {{ form.priority.label }}
+                    {{ form.priority(class="form-control") }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="form-control", rows=8) }}
+            </div>
+
+            <!-- Submit button container -->
+            <div style="margin-top:20px;">
+                <button type="submit" id="submit-request-btn" class="btn btn-primary" disabled style="background:#bdc3c7;">
+                    Select at least 1 approver to submit
+                </button>
+            </div>
+        </div>
+        
+        <!-- Right Column: Approver Search Panel -->
+        <div class="card" style="width:350px; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="margin-top:0;">Assign Approvers</h3>
+            <p style="font-size:13px; color:#666;">Search for your manager or team lead to approve this request.</p>
+            
+            <div class="search-panel" style="background:#f9f9f9; padding:15px; border-radius:5px; margin-bottom: 20px;">
+                <input type="text" id="search-name" class="form-control" placeholder="Search name...">
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <select id="search-dept" class="form-control" style="font-size:13px;">
+                        <option value="">Any Dept</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Ai/ml">Ai/ml</option>
+                        <option value="Software engineering">Software engineering</option>
+                        <!-- In a real system, passed securely via backend -->
+                    </select>
+                    <select id="search-role" class="form-control" style="font-size:13px;">
+                        <option value="">Any Role</option>
+                        <option value="team_lead">Team Lead</option>
+                        <option value="manager">Manager</option>
+                        <option value="director">Director</option>
+                    </select>
+                </div>
+                <button type="button" id="trigger-search" class="btn" style="width:100%; margin-top:10px; background:#34495e; color:white;">Search</button>
+            </div>
+            
+            <!-- Search Results Populated via JS -->
+            <div id="search-results" style="max-height: 200px; overflow-y:auto; margin-bottom: 20px;"></div>
+            
+            <!-- Selected Approvers Chips -->
+            <h4 style="margin-bottom: 10px; border-top: 1px solid #eee; padding-top: 15px;">Selected Approvers</h4>
+            <div id="selected-approvers" style="display:flex; flex-direction:column; gap:10px;">
+                <div style="font-size:13px; color:#999;" id="no-approvers-msg">No approvers selected.</div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    window.USER_DOMAIN = "{{ current_user.department }}";
+</script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="header-action-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+    <h2>Action Queue</h2>
+</div>
+
+<div class="card" style="background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+    <table style="width:100%; border-collapse: collapse; font-size:14px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+                <th style="padding: 12px;">Request ID</th>
+                <th style="padding: 12px;">Requester</th>
+                <th style="padding: 12px;">Title</th>
+                <th style="padding: 12px;">Priority</th>
+                <th style="padding: 12px;">Wait Time</th>
+                <th style="padding: 12px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ra in records %}
+            {% set r = ra.request %}
+            <tr style="border-bottom: 1px solid #f5f5f5;">
+                <td style="padding: 12px;"><a href="{{ url_for('requests_bp.request_detail', request_code=r.request_code) }}" style="font-weight:bold; color:var(--primary);">{{ r.request_code }}</a></td>
+                <td style="padding: 12px;">{{ r.requester.full_name }}</td>
+                <td style="padding: 12px;">{{ r.title[:30] + '...' if r.title|length > 30 else r.title }}</td>
+                <td style="padding: 12px;">
+                    {% if r.priority == 'critical' %} <span style="color:var(--danger); font-weight:bold;">Critical</span>
+                    {% elif r.priority == 'high' %} <span style="color:#e67e22; font-weight:bold;">High</span>
+                    {% elif r.priority == 'medium' %} <span style="color:var(--success); font-weight:bold;">Medium</span>
+                    {% else %} <span style="color:#7f8c8d; font-weight:bold;">Low</span> {% endif %}
+                </td>
+                <td style="padding: 12px;">
+                    <!-- Very basic calc for now -->
+                    {{ (r.submitted_at.utcnow() - r.submitted_at).days }} days
+                </td>
+                <td style="padding: 12px;">
+                    <a href="{{ url_for('requests_bp.request_detail', request_code=r.request_code) }}" class="btn btn-sm btn-primary">Review</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="padding: 20px; text-align: center; color:#666;">Your queue is fully caught up! 🎉</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

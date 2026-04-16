@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-container" style="max-width: 600px;">
+    <h2>{{ title }}</h2>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        {% if 'employee_id' in form %}
+        <div class="form-group">
+            {{ form.employee_id.label }}
+            {{ form.employee_id(class="form-control") }}
+            {% for error in form.employee_id.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="form-group">
+            <label>Employee ID</label>
+            <input type="text" class="form-control" value="{{ user.employee_id }}" disabled style="background:#f5f5f5;">
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            {{ form.full_name.label }}
+            {{ form.full_name(class="form-control") }}
+            {% for error in form.full_name.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.department.label }}
+            {{ form.department(class="form-control") }}
+            {% for error in form.department.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.role.label }}
+            {{ form.role(class="form-control") }}
+            {% for error in form.role.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        {% if 'password' in form %}
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+            {% for error in form.password.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password(class="form-control") }}
+            {% for error in form.confirm_password.errors %}
+                <span class="text-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px;">
+            {{ form.force_pw_reset() }}
+            {{ form.force_pw_reset.label }}
+        </div>
+        {% endif %}
+
+        <div class="form-group" style="margin-top: 20px;">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('admin_bp.list_users') }}" class="btn" style="background:#bdc3c7; text-align:center; display:block; margin-top:10px; text-decoration:none; color:#333;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

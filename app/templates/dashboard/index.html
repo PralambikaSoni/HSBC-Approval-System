@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+    <h2>Welcome back, {{ current_user.full_name }}</h2>
+    <div><span class="badge" style="background:#f39c12; color:white; font-size:14px; padding:6px 12px;">{{ current_user.role | title }}</span></div>
+</div>
+
+{% if current_user.role == 'director' %}
+<div class="dashboard-section">
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">System Overview</h3>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <h4>Total Requests</h4>
+            <div class="val">{{ sys_total }}</div>
+        </div>
+        <div class="metric-card warning">
+            <h4>Open Requests</h4>
+            <div class="val">{{ sys_pending }}</div>
+        </div>
+        <div class="metric-card danger">
+            <h4>Escalated Approvals</h4>
+            <div class="val">{{ sys_escalated }}</div>
+        </div>
+        <div class="metric-card success">
+            <h4>Active Employees</h4>
+            <div class="val">{{ sys_users }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if current_user.role in ['team_lead', 'manager', 'director'] %}
+<div class="dashboard-section">
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 10px; display:flex; justify-content:space-between; align-items:flex-end;">
+        <span>Action Required</span>
+        <a href="{{ url_for('approvals_bp.queue') }}" style="font-size:14px; text-decoration:none;">View Full Queue →</a>
+    </h3>
+    <div class="metrics-grid" style="grid-template-columns: 250px 1fr;">
+        <div class="metric-card {% if action_required_count > 0 %}danger{% endif %}">
+            <h4>Pending Approvals</h4>
+            <div class="val">{{ action_required_count }}</div>
+            {% if action_required_count > 0 %}
+            <div style="font-size:12px; color:var(--danger); margin-top:5px;">Check your queue!</div>
+            {% endif %}
+        </div>
+        
+        <div class="card" style="background:white; padding:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h4 style="margin-top:0; font-size:14px; color:#666; text-transform:uppercase;">Next in Line</h4>
+            {% if recent_queue %}
+                <ul style="list-style:none; padding:0; margin:0;">
+                    {% for ra in recent_queue %}
+                    <li style="padding:10px 0; border-bottom:1px solid #eee;">
+                        <a href="{{ url_for('requests_bp.request_detail', request_code=ra.request.request_code) }}" style="text-decoration:none; font-weight:bold; color:var(--primary);">{{ ra.request.request_code }}</a> - {{ ra.request.title[:40] }}
+                        <span style="font-size:12px; color:#999; float:right;">{{ ra.request.submitted_at.strftime('%Y-%m-%d') }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div style="padding:20px; text-align:center; color:#999;">Queue is clear.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="dashboard-section">
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 10px; display:flex; justify-content:space-between; align-items:flex-end;">
+        <span>My Submissions</span>
+        <a href="{{ url_for('requests_bp.list_requests') }}" style="font-size:14px; text-decoration:none;">View All →</a>
+    </h3>
+    <div class="metrics-grid" style="grid-template-columns: 250px 1fr;">
+        <div>
+            <div class="metric-card" style="margin-bottom:20px;">
+                <h4>Total Submitted</h4>
+                <div class="val">{{ my_total }}</div>
+            </div>
+            <div class="metric-card warning">
+                <h4>Awaiting Decision</h4>
+                <div class="val">{{ my_pending }}</div>
+            </div>
+        </div>
+        
+        <div class="card" style="background:white; padding:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h4 style="margin-top:0; font-size:14px; color:#666; text-transform:uppercase;">Recent Activity</h4>
+            {% if my_recent %}
+                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                    {% for r in my_recent %}
+                    <tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:8px 0;"><a href="{{ url_for('requests_bp.request_detail', request_code=r.request_code) }}" style="text-decoration:none; font-weight:bold; color:var(--primary);">{{ r.request_code }}</a></td>
+                        <td style="padding:8px 0;">
+                            <span class="badge" style="background:#34495e; color:#fff;">{{ r.status | upper }}</span>
+                        </td>
+                        <td style="padding:8px 0; color:#999; text-align:right;">{{ r.submitted_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <div style="padding:20px; text-align:center; color:#999;">No requests submitted yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

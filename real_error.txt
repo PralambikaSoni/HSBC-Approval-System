@@ -1,0 +1,34 @@
+Traceback (most recent call last):
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\debug_db.py", line 5, in <module>
+    from app import create_app
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\app\__init__.py", line 5, in <module>
+    from .extensions import db, login_manager, bcrypt, csrf, scheduler
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\app\extensions.py", line 1, in <module>
+    from flask_sqlalchemy import SQLAlchemy
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\flask_sqlalchemy\__init__.py", line 5, in <module>
+    from .extension import SQLAlchemy
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\flask_sqlalchemy\extension.py", line 9, in <module>
+    import sqlalchemy as sa
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\__init__.py", line 13, in <module>
+    from .engine import AdaptedConnection as AdaptedConnection
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\engine\__init__.py", line 18, in <module>
+    from . import events as events
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\engine\events.py", line 19, in <module>
+    from .base import Connection
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 30, in <module>
+    from .interfaces import BindTyping
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\engine\interfaces.py", line 38, in <module>
+    from ..sql.compiler import Compiled as Compiled
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\sql\__init__.py", line 14, in <module>
+    from .compiler import COLLECT_CARTESIAN_PRODUCTS as COLLECT_CARTESIAN_PRODUCTS
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\sql\compiler.py", line 615, in <module>
+    class InsertmanyvaluesSentinelOpts(FastIntFlag):
+    ...<14 lines>...
+        RENDER_SELECT_COL_CASTS = 64
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1663, in __init__
+    sym = symbol(k, canonical=v)
+  File "C:\Users\Pralambika Soni\OneDrive\Documents\Approval_System_\IPAS\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1635, in __new__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Can't replace canonical symbol for '__firstlineno__' with new int value 615
