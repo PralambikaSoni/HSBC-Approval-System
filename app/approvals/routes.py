@@ -83,6 +83,7 @@ def take_action(request_id):
         send_notification(req.requester_id, f"Your request {req.request_code} was REJECTED.", request_id=req.id)
         flash('Request rejected.', 'danger')
         
+    elif action_type == 'request_details':
         approval = Approval(request_id=req.id, approver_id=current_user.id, action='modification_requested', comment=comment)
         db.session.add(approval)
         
