@@ -81,13 +81,15 @@ def check_escalations():
                 approval = Approval(request_id=req.id, approver_id=approver.id, action='escalated', comment='AUTO-ESCALATED')
                 db.session.add(approval)
                 
-                # Create new assignment
-                new_ra = RequestApprover(
-                    request_id=req.id, 
-                    approver_id=target.id,
-                    note_to_approver=f"AUTO-ESCALATED: Original approver {approver.full_name} failed to respond in {escalation_hours}h."
-                )
-                db.session.add(new_ra)
+                # Create new assignment if they aren't already an approver
+                existing_ra = RequestApprover.query.filter_by(request_id=req.id, approver_id=target.id).first()
+                if not existing_ra:
+                    new_ra = RequestApprover(
+                        request_id=req.id, 
+                        approver_id=target.id,
+                        note_to_approver=f"AUTO-ESCALATED: Original approver {approver.full_name} failed to respond in {escalation_hours}h."
+                    )
+                    db.session.add(new_ra)
                 
                 # Audit log
                 audit = AuditLog(

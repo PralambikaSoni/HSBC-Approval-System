@@ -27,6 +27,10 @@ def index():
         context['action_required_count'] = len(pending_assignments)
         context['recent_queue'] = pending_assignments[:5]
         
+        # Approval history (requests acted upon recently)
+        recent_approvals = Approval.query.filter_by(approver_id=current_user.id).order_by(Approval.acted_at.desc()).limit(5).all()
+        context['recent_approvals'] = recent_approvals
+        
     # Director System Stats
     if current_user.role == 'director':
         context['sys_total'] = Request.query.count()

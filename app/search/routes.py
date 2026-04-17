@@ -22,7 +22,7 @@ def search_approvers():
     if name:
         query = query.filter(User.full_name.ilike(f"%{name}%"))
     if department:
-        query = query.filter(User.department == department)
+        query = query.filter(User.department.ilike(department))
     if role:
         query = query.filter(User.role == role)
     if emp_id:

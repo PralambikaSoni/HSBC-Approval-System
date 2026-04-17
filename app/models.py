@@ -98,6 +98,8 @@ class Approval(db.Model):
     comment = sa.Column(sa.Text, nullable=True)
     acted_at = sa.Column(sa.DateTime, default=sa.func.now())
 
+    request = relationship('Request', foreign_keys=[request_id])
+
 class SnoozeLog(db.Model):
     __tablename__ = 'snooze_log'
 

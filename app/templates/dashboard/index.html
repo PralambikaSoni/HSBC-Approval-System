@@ -44,8 +44,9 @@
             {% endif %}
         </div>
         
-        <div class="card" style="background:white; padding:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <h4 style="margin-top:0; font-size:14px; color:#666; text-transform:uppercase;">Next in Line</h4>
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="card" style="background:white; padding:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <h4 style="margin-top:0; font-size:14px; color:#666; text-transform:uppercase;">Next in Line</h4>
             {% if recent_queue %}
                 <ul style="list-style:none; padding:0; margin:0;">
                     {% for ra in recent_queue %}
@@ -55,9 +56,34 @@
                     </li>
                     {% endfor %}
                 </ul>
+        {% else %}
+            <div style="padding:20px; text-align:center; color:#999;">Queue is clear.</div>
+        {% endif %}
+        </div>
+        
+        <div class="card" style="background:white; padding:15px; border-radius:8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h4 style="margin-top:0; font-size:14px; color:#666; text-transform:uppercase;">Approval History</h4>
+            {% if recent_approvals %}
+                <ul style="list-style:none; padding:0; margin:0;">
+                    {% for a in recent_approvals %}
+                    <li style="padding:10px 0; border-bottom:1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <a href="{{ url_for('requests_bp.request_detail', request_code=a.request.request_code) }}" style="text-decoration:none; font-weight:bold; color:var(--primary);">{{ a.request.request_code }}</a>
+                            <span style="font-size:12px; color:#666; margin-left: 5px;">- {{ a.request.title[:30] }}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="badge" style="background:{% if a.action == 'approved' %}var(--success){% elif a.action == 'rejected' %}var(--danger){% else %}#95a5a6{% endif %}; color:white; font-size: 11px;">
+                                {{ a.action | upper }}
+                            </span>
+                            <div style="font-size: 11px; color: #999; margin-top: 3px;">{{ a.acted_at.strftime('%Y-%m-%d') }}</div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
             {% else %}
-                <div style="padding:20px; text-align:center; color:#999;">Queue is clear.</div>
+                <div style="padding:20px; text-align:center; color:#999;">No recent approvals.</div>
             {% endif %}
+        </div>
         </div>
     </div>
 </div>
