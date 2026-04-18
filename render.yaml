@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ipas-app
+    env: python
+    buildCommand: "bash ./render-build.sh"
+    startCommand: "gunicorn -w 2 'run:app'"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        # We leave this sync false so you can input an external PostgreSQL 
+        # connection string from Neon.tech or Supabase into the Render Dashboard.
+        sync: false
+      - key: SECRET_KEY
+        # This tells Render to generate a secure random secret key for the Flask app.
+        generateValue: true
